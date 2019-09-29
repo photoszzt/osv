@@ -27,11 +27,12 @@ else
 fi
 
 OSV_VERSION=$(scripts/osv-version.sh | cut -d - -f 1 | grep -Po "[^v]*")
-OSV_COMMIT=$(scripts/osv-version.sh | grep -Po "\-g.*" | grep -oP "[^-g]*")
+# OSV_COMMIT=$(scripts/osv-version.sh | grep -Po "\-g.*" | grep -oP "[^-g]*")
+# echo $OSV_COMMIT
 
-if [ "$OSV_COMMIT" != "" ]; then
-  version="$OSV_VERSION-$OSV_COMMIT"
-fi
+# if [ "$OSV_COMMIT" != "" ]; then
+#   version="$OSV_VERSION-$OSV_COMMIT"
+# fi
 
 now=$(date +"%Y-%m-%dT%R:%S")
 
@@ -40,6 +41,7 @@ qemuimage=build/release/osv.qcow2
 vboximage=build/release/osv.vdi
 gceimage=build/release/osv.tar.gz
 vmwimage=build/release/osv.vmdk
+rawimage=build/release/osv.raw
 index=$out/index.yaml
 build="scripts/build image=$image"
 capstan_local_repository=$HOME/.capstan/repository
@@ -60,6 +62,7 @@ $build
 # Generate QEMU image
 scripts/convert vdi
 scripts/convert vmdk
+scripts/convert raw
 
 # Generate GCE image
 scripts/gen-gce-tarball.sh
@@ -72,12 +75,14 @@ if [[ "$REPLY" =~ ^[Yy]$ ]]; then
   cp $qemuimage $capstan_local_repository/$name/$(basename $name).qemu
   cp $vboximage $capstan_local_repository/$name/$(basename $name).vbox
   cp $vmwimage $capstan_local_repository/$name/$(basename $name).vmw
+  cp $rawimage $capstan_local_repository/$name/$(basename $name).raw
   echo "Copied base images into $capstan_local_repository/$name/"
 fi
 
 gzip < $qemuimage > $out/$(basename $name).qemu.gz
 gzip < $vboximage > $out/$(basename $name).vbox.gz
 gzip < $vmwimage  > $out/$(basename $name).vmw.gz
+gzip < $rawimage  > $out/$(basename $name).raw.gz
 
 gce_url_file=$out/$(basename $name).gce
 gce_tar_ball=$out/$(basename $name).gce.tar.gz

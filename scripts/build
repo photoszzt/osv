@@ -285,6 +285,11 @@ rofs)
 	qemu-img resize bare.raw ${img_size}b >/dev/null 2>&1
 	dd if=rofs.img of=bare.raw obs=${kernel_end} seek=1 >/dev/null 2>&1
 	qemu-img convert -f raw -O qcow2 bare.raw usr.img
+	if [ "$export" != "none" ]
+	then
+		export_dir=${vars[export_dir]-$SRC/build/export}
+		"$SRC"/scripts/export_manifest.py -e "$export_dir" -m usr.manifest -D jdkbase="$jdkbase" -D gccbase="$gccbase" -D glibcbase="$glibcbase" -D miscbase="$miscbase"
+	fi
 	;;
 ramfs)
 	qemu-img convert -f raw -O qcow2 loader.img usr.img

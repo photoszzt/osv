@@ -72,10 +72,10 @@ build_osv_image() {
 
   echo "-------------------------------------"
   echo "- Building OSv image: "
-  echo "  ./scripts/build -j4 image=$image export=$export_mode usrskel=$usrskel"
+  echo "  ./scripts/build -j4 fs=rofs image=$image export=$export_mode usrskel=$usrskel"
   echo "-------------------------------------"
 
-  cd "$OSV_ROOT" && ./scripts/build -j4 image="$image" export="$export_mode" usrskel="$usrskel"
+  cd "$OSV_ROOT" && ./scripts/build -j4 fs=rofs image="$image" export="$export_mode" usrskel="$usrskel"
 
   RET_VAL=$?
   if [[ "$RET_VAL" -ne 0 ]]; then
@@ -199,7 +199,7 @@ build_mpm() {
     fi
   fi
 
-  rm -rf $package_dir
+  #rm -rf $package_dir
 }
 
 build_and_publish_mpm() {
